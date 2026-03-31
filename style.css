@@ -18,9 +18,29 @@ body{
 }
 
 
-section#in > div {
-	display: flex;
-	flex-direction: column;
+section#in {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    input {
+        width: 100%;
+        border: 1px solid black;
+
+        &:invalid {
+            border: 1px solid red;
+
+            & ~ .error-message {
+                color: red;
+            }
+        }
+    }
+
+    .error-message {
+        color: transparent;
+        font-size: 10px;
+        margin-top: -5px;
+    }
 }
 
 
@@ -41,13 +61,12 @@ input:focus{
 
 
 button{
-	margin-top: 30px;
+	margin-top: 10px;
 	width: 100%;
 	background-color: white;
 	color: black;
 	padding: 5px;
 	border: 1px solid black;
-	box-shadow: 0px 1px 0px black;
 	outline: none;
 }
 button:hover{
@@ -58,6 +77,14 @@ button:hover{
 button:active{
 	border-bottom: 1px solid black;
 	transform: translateY(1px);
+}
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.2;
+    &:hover{
+        background-color: white;
+        color: black;
+    }
 }
 
 
@@ -70,39 +97,13 @@ section#out{
 
 
 
-
 footer{
-	font-size: 12px;
-	position: absolute;
-	bottom: 10px;
-	left: 50%;
-	transform: translateX(-50%);
+    font-size: 12px;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
 }
-
-
-
-
-
-.input-cont{
-	border: 1px solid black;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	height: fit-content;
-	margin-bottom: 10px;
-}
-.input-cont svg{
-	width: fit-content;
-	margin-left: auto;
-	margin-right: 10px;
-	height: 17px;
-	width: 17px;
-}
-.input-cont input{
-	border: none;
-}
-
-
 
 
 
@@ -114,4 +115,18 @@ footer{
 	body{
 		width: 80%;
 	}
+}
+
+
+
+@font-face {
+  font-family: 'pass';
+  font-style: normal;
+  font-weight: 400;
+  src: url(data:application/font-woff;charset=utf-8;base64,d09GRgABAAAAAASAAAsAAAAABDQAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAABCAAAAGAAAABgLxEw6mNtYXAAAAFoAAAAVAAAAFTahkwlZ2FzcAAAAbwAAAAIAAAACAAAABBnbHlmAAABxAAAAHgAAAB4GupDKGhlYWQAAAI8AAAANgAAADYsvE/ZaGhlYQAAAnQAAAAkAAAAJAV8A8ZobXR4AAACmAAAABQAAAAUB+IAAGxvY2EAAAKsAAAADAAAAAwAKABQbWF4cAAAArgAAAAgAAAAIAAHABJuYW1lAAAC2AAAAYYAAAGGmUoJ+3Bvc3QAAARgAAAAIAAAACAAAwAAAAMB8QGQAAUAAAKZAswAAACPApkCzAAAAesAMwEJAAAAAAAAAAAAAAAAAAAAAQAAIAAAAAAAAAAAAAAAAAAAQAAAJc8DwP/AAEADwABAAAAAAQAAAAAAAAAAAAAAIAAAAAAAAwAAAAMAAAAcAAEAAwAAABwAAwABAAAAHAAEADgAAAAKAAgAAgACAAEAICXP//3//wAAAAAAICXP//3//wAB/+PaNQADAAEAAAAAAAAAAAAAAAEAAf//AA8AAQAA/8AAAAPAAAIAADc5AQAAAAABAAD/wAAAA8AAAgAANzkBAAAAAAEAAP/AAAADwAACAAA3OQEAAAAAAQAA/8ABugPAAA8AADcnNyc3FzUzFTcXBxcHJweLLWKeEZ46nhGeYi1jY9YhhzQ1M6urMzU0hyGIiAAAAQAAAAEAAE4F4yFfDzz1AAsEAAAAAADl8YWuAAAAAOXxha4AAP/AAboDwAAAAAgAAgAAAAAAAAABAAADwP/AAAAEAAAAAAABugABAAAAAAAAAAAAAAAAAAAABQQAAAAAAAAAAAAAAAIAAAAB4gAAAAAAAAAKABQAHgA8AAEAAAAFABAAAQAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAOAK4AAQAAAAAAAQAHAAAAAQAAAAAAAgAHAGAAAQAAAAAAAwAHADYAAQAAAAAABAAHAHUAAQAAAAAABQALABUAAQAAAAAABgAHAEsAAQAAAAAACgAaAIoAAwABBAkAAQAOAAcAAwABBAkAAgAOAGcAAwABBAkAAwAOAD0AAwABBAkABAAOAHwAAwABBAkABQAWACAAAwABBAkABgAOAFIAAwABBAkACgA0AKRpY29tb29uAGkAYwBvAG0AbwBvAG5WZXJzaW9uIDEuMABWAGUAcgBzAGkAbwBuACAAMQAuADBpY29tb29uAGkAYwBvAG0AbwBvAG5pY29tb29uAGkAYwBvAG0AbwBvAG5SZWd1bGFyAFIAZQBnAHUAbABhAHJpY29tb29uAGkAYwBvAG0AbwBvAG5Gb250IGdlbmVyYXRlZCBieSBJY29Nb29uLgBGAG8AbgB0ACAAZwBlAG4AZQByAGEAdABlAGQAIABiAHkAIABJAGMAbwBNAG8AbwBuAC4AAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) format('woff');
+}
+
+input[type=password]:not(:placeholder-shown) {
+  font-family: 'pass', 'Roboto', Helvetica, Arial, sans-serif;
+  font-size: 16px;
 }

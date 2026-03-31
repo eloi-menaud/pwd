@@ -1,0 +1,116 @@
+*{
+
+	font-family: "IBM Plex Mono", serif;
+	font-weight: 400;
+	font-style: normal;
+
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+
+body{
+	max-width: 300px;
+	width: 90%;
+	margin: 0 auto;
+	margin-top: 100px;
+}
+
+
+section#in > div {
+	display: flex;
+	flex-direction: column;
+}
+
+
+
+
+input{
+	border: 1px solid black;
+	padding: 5px;
+}
+input::placeholder{
+	color: grey;
+}
+input:focus{
+	outline: none;
+}
+
+0m4AzY0rSoKsb!1a
+
+
+button{
+	margin-top: 30px;
+	width: 100%;
+	background-color: white;
+	color: black;
+	padding: 5px;
+	border: 1px solid black;
+	box-shadow: 0px 1px 0px black;
+	outline: none;
+}
+button:hover{
+	cursor: pointer;
+	background-color: black;
+	color: white;
+}
+button:active{
+	border-bottom: 1px solid black;
+	transform: translateY(1px);
+}
+
+
+
+
+section#out{
+	margin-top: 20px;
+	color: transparent;
+}
+
+
+
+
+footer{
+	font-size: 12px;
+	position: absolute;
+	bottom: 10px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+
+
+
+
+.input-cont{
+	border: 1px solid black;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	height: fit-content;
+	margin-bottom: 10px;
+}
+.input-cont svg{
+	width: fit-content;
+	margin-left: auto;
+	margin-right: 10px;
+	height: 17px;
+	width: 17px;
+}
+.input-cont input{
+	border: none;
+}
+
+
+
+
+
+
+
+
+@media only screen and (max-width: 768px) {
+	body{
+		width: 80%;
+	}
+}

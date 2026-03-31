@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="icon" href="./favicon.ico" type="image/x-icon">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="./style.css">
+
+	<title>h</title>
+</head>
+<body>
+	<section id="in">
+		<div>
+			<div class="input-cont">
+				<input id="data" type="password" placeholder="data">
+			</div>
+			<input id="key" type="password" placeholder="key">
+		</div>
+		<button onclick="h()">h</button>
+	</section>
+	<section id="out">
+		<p id="default"></p>
+	</section>
+	<footer>
+		<p title="base64_sha256('{data}{key}')[0:13] + '!1a'">i</p>
+	</footer>
+
+	<script>
+
+		async function generate(payload){
+			const text_as_buffer = new TextEncoder().encode(payload);
+			const hash_buffer = await window.crypto.subtle.digest("SHA-256", text_as_buffer);
+			const hash = btoa(String.fromCharCode(...new Uint8Array(hash_buffer)))
+			const short_hash = hash.slice(0,13)
+			pwd = short_hash + "!1a" // make sure pwd ends with a letter, and contains a spe-char, number and letter
+			return pwd
+		}
+
+
+
+		async function h(){
+			data = document.getElementById("data").value
+			key  = document.getElementById("key").value
+			if (!data || !key){ return "" }
+
+			payload  = data + key
+			hash     = await generate(payload)
+
+			document.querySelector("#default").innerText = hash
+
+			try {
+				await navigator.clipboard.writeText(hash);
+				document.querySelector("button").innerText = "copied ✓"
+				setTimeout(() => {
+					document.querySelector("button").innerText = "h"
+				}, 1500);
+			} catch (err) {
+				alert('Failed to copy to clipboard ' + err);
+			}
+		}
+
+	</script>
+
+</body>
+</html>

@@ -1,71 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="icon" href="./favicon.ico" type="image/x-icon">
+<link rel="icon" href="./favicon.ico" type="image/x-icon">
 
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 
-	<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./style.css">
 
-	<title>h</title>
+<title>pwd</title>
 </head>
 <body>
-	<section id="in">
-		<div>
-			<div class="input-cont">
-				<input id="data" type="password" placeholder="data">
-			</div>
-			<input id="key" type="password" placeholder="key">
-		</div>
-		<button onclick="h()">h</button>
-	</section>
-	<section id="out">
-		<p id="default"></p>
-	</section>
-	<footer>
-		<p title="base64_sha256('{data}{key}')[0:13] + '!1a'">i</p>
-	</footer>
+<section id="in">
+	<input id="data" type="text" placeholder="data" oninput="pwd_enable()">
+	<input id="key" type="password" placeholder="key" minlength="6" oninput="pwd_enable()">
+	<span class="error-message">must be at least 6 chars long</span>
+	<button onclick="getpwd()" disabled>pwd</button>
+</section>
+<section id="out">
+	<p id="default"></p>
+</section>
+<footer>
+<pre>
+pwd algo : PBKDF2('{data}{key}')<sub>64</sub>[0:13] + '!1a'
+</pre>
+<hr style="margin: 10px 0; border: none; border-top: 1px solid #bbb;">
+<pre style="margin-bottom: 10px;">
+PBKDF2
+  salt<sub>64</sub>      : ('salt')<sub>64</sub>
+  iterations<sub>  </sub>: 600000
+  key len<sub>  </sub>   : 96 bytes
+  sha<sub>  </sub>       : sha-256
+</pre>
+</footer>
 
-	<script>
+<script>
 
-		async function generate(payload){
-			const text_as_buffer = new TextEncoder().encode(payload);
-			const hash_buffer = await window.crypto.subtle.digest("SHA-256", text_as_buffer);
-			const hash = btoa(String.fromCharCode(...new Uint8Array(hash_buffer)))
-			const short_hash = hash.slice(0,13)
-			pwd = short_hash + "!1a" // make sure pwd ends with a letter, and contains a spe-char, number and letter
-			return pwd
-		}
+  const iterations = 600000;
+  const str_salt = "salt"; 
+  var version = "";
+  
+  const man_v1 = "base64_sha256('{data}{key}')[0:13] + '!1a'"
+  async function generate_v1(payload){
+    const text_as_buffer = new TextEncoder().encode(payload);
+    const hash_buffer = await window.crypto.subtle.digest("SHA-256", text_as_buffer);
+    const hash = btoa(String.fromCharCode(...new Uint8Array(hash_buffer)))
+    return hash
+  }
+  
+  async function hash(payload) {
+    const encoder = new TextEncoder();
+    const salt = encoder.encode(str_salt);
+    const baseKey = await window.crypto.subtle.importKey(
+      "raw",
+      encoder.encode(payload),
+      "PBKDF2",
+      false,
+      ["deriveBits"]
+    );
+      
+    const derivedBits = await window.crypto.subtle.deriveBits(
+      {
+        name: "PBKDF2",
+        salt: salt,
+        iterations: iterations,
+        hash: "SHA-256"
+      },
+      baseKey,
+      96
+    );
+      
+  
+    const hash_array = new Uint8Array(derivedBits);
+    const hash_base64 = btoa(String.fromCharCode(...hash_array));
+    return hash_base64
+  }
+  
+  function pwd_enable(){
+    if (document.getElementById("data").value && document.getElementById("key").value.length >= 6){
+      document.querySelector('button').disabled = false;
+    } else {
+      document.querySelector('button').disabled = true;
+    }
+  }
+
+    
+
+  async function getpwd(){
+    data = document.getElementById("data").value
+    key  = document.getElementById("key").value
+    if (!data || !key){ return "" }
+    
+    if ( key.length < 6) {
+      alert('key must be at least 6 chars long');
+      return
+    }
+  
+    payload  = data + key
+    
+    h = await hash(payload);
+    const short_hash = h.slice(0,13)
+    pwd = short_hash + "!1a" // make sure pwd ends with a letter, and contains a spe-char, number and letter
+    
+    document.querySelector("#default").innerText = pwd
+    
+    try {
+      await navigator.clipboard.writeText(pwd);
+      document.querySelector("button").innerText = "copied ✓"
+      setTimeout(() => {
+       	document.querySelector("button").innerText = "pwd"
+      }, 1500);
+    } catch (err) {
+      alert('Failed to copy to clipboard : ' + err);
+      return
+    }
+  }
+  
+  
+	
 
 
-
-		async function h(){
-			data = document.getElementById("data").value
-			key  = document.getElementById("key").value
-			if (!data || !key){ return "" }
-
-			payload  = data + key
-			hash     = await generate(payload)
-
-			document.querySelector("#default").innerText = hash
-
-			try {
-				await navigator.clipboard.writeText(hash);
-				document.querySelector("button").innerText = "copied ✓"
-				setTimeout(() => {
-					document.querySelector("button").innerText = "h"
-				}, 1500);
-			} catch (err) {
-				alert('Failed to copy to clipboard ' + err);
-			}
-		}
-
-	</script>
+</script>
 
 </body>
 </html>
