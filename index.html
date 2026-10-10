@@ -1,130 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="icon" href="./favicon.ico" type="image/x-icon">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="./style.css">
-
-<title>pwd</title>
+<meta charset="utf-8">
+<title>Argon2id</title>
+<script src="https://cdn.jsdelivr.net/npm/hash-wasm@4/dist/argon2.umd.min.js"></script>
+<link rel="stylesheet" href="https://eloi-menaud.github.io/specimen/style.css">
 </head>
+<style>
+body{
+    background-color: white;
+}
+main{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    padding-top: 80px;
+    width: 300px;
+    gap: 10px;
+}
+button{
+    margin-top: 20px;
+}
+
+#keycont{
+    p{
+         color:red;
+         font-size: 12px;
+         min-height: 1em;
+         padding-top: 5px;
+    }
+    input{
+        width: 100%;
+    }
+}
+pre{
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+</style>
 <body>
-<section id="in">
-	<input id="data" type="text" placeholder="data" oninput="pwd_enable()">
-	<input id="key" type="password" placeholder="key" minlength="6" oninput="pwd_enable()">
-	<span class="error-message">must be at least 6 chars long</span>
-	<button onclick="getpwd()" disabled>pwd</button>
-</section>
-<section id="out">
-	<p id="default"></p>
-</section>
-<footer>
-<pre>
-pwd algo : PBKDF2('{data}{key}')<sub>64</sub>[0:13] + '!1a'
-</pre>
-<hr style="margin: 10px 0; border: none; border-top: 1px solid #bbb;">
-<pre style="margin-bottom: 10px;">
-PBKDF2
-  salt<sub>64</sub>      : ('salt')<sub>64</sub>
-  iterations<sub>  </sub>: 600000
-  key len<sub>  </sub>   : 96 bytes
-  sha<sub>  </sub>       : sha-256
-</pre>
-</footer>
+    <main>    
+        <input id="data" type="text" placeholder="data">
+        <div id="keycont">
+            <input id="key" type="password" placeholder="key">
+            <p id="err">&nbsp;</p>
+        </div>
+        <button id="hash">hash</button>
+        <pre id="out"></pre>
+    </main>
+    <pre>
+algo: argon2id({data}{key})<sub>64</sub>[:13] + '1!a'
 
-<script>
-
-  const iterations = 600000;
-  const str_salt = "salt"; 
-  var version = "";
-  
-  const man_v1 = "base64_sha256('{data}{key}')[0:13] + '!1a'"
-  async function generate_v1(payload){
-    const text_as_buffer = new TextEncoder().encode(payload);
-    const hash_buffer = await window.crypto.subtle.digest("SHA-256", text_as_buffer);
-    const hash = btoa(String.fromCharCode(...new Uint8Array(hash_buffer)))
-    return hash
-  }
-  
-  async function hash(payload) {
-    const encoder = new TextEncoder();
-    const salt = encoder.encode(str_salt);
-    const baseKey = await window.crypto.subtle.importKey(
-      "raw",
-      encoder.encode(payload),
-      "PBKDF2",
-      false,
-      ["deriveBits"]
-    );
-      
-    const derivedBits = await window.crypto.subtle.deriveBits(
-      {
-        name: "PBKDF2",
-        salt: salt,
-        iterations: iterations,
-        hash: "SHA-256"
-      },
-      baseKey,
-      96
-    );
-      
-  
-    const hash_array = new Uint8Array(derivedBits);
-    const hash_base64 = btoa(String.fromCharCode(...hash_array));
-    return hash_base64
-  }
-  
-  function pwd_enable(){
-    if (document.getElementById("data").value && document.getElementById("key").value.length >= 6){
-      document.querySelector('button').disabled = false;
-    } else {
-      document.querySelector('button').disabled = true;
-    }
-  }
-
+argon2id:
+    salt        salt0000
+    parallelism 1
+    iterations  3
+    memorySize  65536 KiB
+    hashLength  32</pre>
+    <script>
+    document.getElementById('hash').onclick = async () => {
+        const key  = document.getElementById('key').value;
+        const data = document.getElementById('data').value;
+        const err  = document.getElementById('err');
+        const out  = document.getElementById('out');
+        if (key.length < 7) {
+            err.textContent = 'Key must be at least 7 chars long.';
+            out.textContent = '';
+            return;
+        }
+        err.innerHTML = '&nbsp;';
     
-
-  async function getpwd(){
-    data = document.getElementById("data").value
-    key  = document.getElementById("key").value
-    if (!data || !key){ return "" }
+        const raw = await hashwasm.argon2id({
+            password: `${data}${key}`,
+            salt: 'salt0000',
+            parallelism: 1,
+            iterations: 3,
+            memorySize: 65536, // KiB
+            hashLength: 32,
+            outputType: 'binary'
+        });
     
-    if ( key.length < 6) {
-      alert('key must be at least 6 chars long');
-      return
-    }
-  
-    payload  = data + key
-    
-    h = await hash(payload);
-    const short_hash = h.slice(0,13)
-    pwd = short_hash + "!1a" // make sure pwd ends with a letter, and contains a spe-char, number and letter
-    
-    document.querySelector("#default").innerText = pwd
-    
-    try {
-      await navigator.clipboard.writeText(pwd);
-      document.querySelector("button").innerText = "copied ✓"
-      setTimeout(() => {
-       	document.querySelector("button").innerText = "pwd"
-      }, 1500);
-    } catch (err) {
-      alert('Failed to copy to clipboard : ' + err);
-      return
-    }
-  }
-  
-  
-	
+        const hash   = Array.from(raw, b => b.toString(16).padStart(2, '0')).join('');
+        const hash64 = btoa(String.fromCharCode(...raw));
+        const pwd    = hash64.slice(0,13) + '!1a';
 
-
-</script>
-
+        try {
+          out.textContent = pwd;
+          await navigator.clipboard.writeText(pwd);
+          document.getElementById("hash").innerText = "copied ✓"
+          setTimeout(() => {
+           	document.getElementById("hash").innerText = "pwd"
+          }, 1500);
+        } catch (err) {
+          alert('Failed to copy to clipboard : ' + err);
+          return
+        }
+    };
+    </script>
 </body>
 </html>
+ 
