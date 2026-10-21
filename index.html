@@ -5,28 +5,39 @@
 <title>pwd</title>
 <script src="https://cdn.jsdelivr.net/npm/hash-wasm@4/dist/argon2.umd.min.js"></script>
 <link rel="stylesheet" href="https://eloi-menaud.github.io/specimen/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <style>
+@media (max-width: 1000px) {
+  html {
+    font-size: 18px !important;
+    main{ 
+        width: 80%;
+    }
+  }
+}
 body{
     background-color: white;
+}
+sub{
+    font-size: 1em !important;
 }
 main{
     display: flex;
     flex-direction: column;
     margin: 0 auto;
-    padding-top: 80px;
-    width: 300px;
-    gap: 10px;
+    padding-top: 10rem;
+    width: 500px;
+    gap: 1rem;
 }
 button{
-    margin-top: 20px;
+    margin-top: 1rem;
 }
 
 #keycont{
     p{
          color:red;
          font-size: 12px;
-         min-height: 1em;
          padding-top: 5px;
     }
     input{
