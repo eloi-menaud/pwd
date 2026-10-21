@@ -44,7 +44,10 @@ button{
         width: 100%;
     }
 }
-pre{
+#out{
+    color: transparent;
+}
+#info{
     position: absolute;
     bottom: 30px;
     left: 50%;
@@ -62,7 +65,7 @@ pre{
         <button id="hash">hash</button>
         <pre id="out"></pre>
     </main>
-    <pre>
+    <pre id="info">
 algo: argon2id({data}{key})<sub>64</sub>[:13] + '1!a'
 
 argon2id:
