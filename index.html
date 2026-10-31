@@ -89,7 +89,7 @@ button{
         const data = document.getElementById('data').value;
         const err  = document.getElementById('err');
         const out  = document.getElementById('out');
-        if (key.length <= 8) {
+        if (key.length < 8) {
             err.textContent = 'Key must be at least 8 chars long.';
             out.textContent = '';
             return;
