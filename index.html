@@ -4,34 +4,27 @@
 <meta charset="utf-8">
 <title>pwd</title>
 <script src="https://cdn.jsdelivr.net/npm/hash-wasm@4/dist/argon2.umd.min.js"></script>
-<link rel="stylesheet" href="https://eloi-menaud.github.io/specimen/style.css">
+<!--<link rel="stylesheet" href="https://eloi-menaud.github.io/specimen/style.css">-->
+<link rel="stylesheet" href="/home/eloi/projects/specimen/style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <style>
-@media (max-width: 1000px) {
-  html {
-    font-size: 16px !important;
-    main{ 
-        width: 80%;
-    }
-  }
-}
+
+html{font-size: 16px;}
 body{
     background-color: white;
 }
-sub{
-    font-size: 1em !important;
-}
+
 main{
     display: flex;
     flex-direction: column;
     margin: 0 auto;
-    padding-top: 3rem;
-    width: 500px;
-    gap: 1rem;
+    padding-top: 10rem;
+    width: 400px;
+    gap: 0.7rem;
 }
 button{
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
 #keycont{
@@ -52,8 +45,18 @@ button{
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 12px;
+    font-size: 0.7rem;
 }
+
+@media (max-width: 1000px) {
+  html {
+    font-size: 14px;
+    main{ 
+        width: 70%;
+    }
+  }
+}
+
 </style>
 <body>
     <main>    
@@ -73,15 +76,21 @@ argon2id:
     parallelism 1
     iterations  3
     memorySize  65536 KiB
-    hashLength  32</pre>
+    hashLength  32
+    
+check:
+    data 0
+    key  00000000
+    pwd  BmgnzIbA30kni!1a
+</pre>
     <script>
     document.getElementById('hash').onclick = async () => {
         const key  = document.getElementById('key').value;
         const data = document.getElementById('data').value;
         const err  = document.getElementById('err');
         const out  = document.getElementById('out');
-        if (key.length < 7) {
-            err.textContent = 'Key must be at least 7 chars long.';
+        if (key.length <= 8) {
+            err.textContent = 'Key must be at least 8 chars long.';
             out.textContent = '';
             return;
         }
