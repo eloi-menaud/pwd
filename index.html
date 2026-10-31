@@ -1,3 +1,20 @@
+<!--
+
+algo: argon2id({data}{key})<sub>64</sub>[:13] + '1!a'
+
+argon2id:
+    salt        salt0000
+    parallelism 1
+    iterations  3
+    memorySize  65536 KiB
+    hashLength  32
+    
+check:
+    data 0
+    key  00000000
+    pwd  BmgnzIbA30kni!1a
+
+-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +36,7 @@ main{
     display: flex;
     flex-direction: column;
     margin: 0 auto;
-    padding-top: 10rem;
+    padding-top: 200px;
     width: 400px;
     gap: 0.7rem;
 }
@@ -40,18 +57,12 @@ button{
 #out{
     color: transparent;
 }
-#info{
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.7rem;
-}
 
 @media (max-width: 1000px) {
   html {
     font-size: 14px;
     main{ 
+        padding-top: 100px;
         width: 70%;
     }
   }
@@ -65,24 +76,10 @@ button{
             <input id="key" type="password" placeholder="key">
             <p id="err">&nbsp;</p>
         </div>
-        <button id="hash">hash</button>
+        <button id="hash">pwd</button>
         <pre id="out"></pre>
     </main>
-    <pre id="info">
-algo: argon2id({data}{key})<sub>64</sub>[:13] + '1!a'
-
-argon2id:
-    salt        salt0000
-    parallelism 1
-    iterations  3
-    memorySize  65536 KiB
-    hashLength  32
     
-check:
-    data 0
-    key  00000000
-    pwd  BmgnzIbA30kni!1a
-</pre>
     <script>
     document.getElementById('hash').onclick = async () => {
         const key  = document.getElementById('key').value;
@@ -122,6 +119,8 @@ check:
           return
         }
     };
+
+
     </script>
 </body>
 </html>
